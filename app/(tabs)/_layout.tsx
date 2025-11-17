@@ -1,61 +1,26 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-
-import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { AntDesign, Feather, FontAwesome5, MaterialIcons } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
+import { Icon, Label, NativeTabs, VectorIcon } from 'expo-router/unstable-native-tabs';
+import React from 'react';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-      }}>
-      
-      <Tabs.Screen
-        name="courses"
-        options={{
-          title: 'Courses',
-          tabBarIcon: ({ color }) => <AntDesign size={24} name="book" color={color} />,
-        }}
-      />
-      
-      <Tabs.Screen
-        name="tutor-sessions"
-        options={{
-          title: 'Tutor AI',
-          tabBarIcon: ({ color }) => <FontAwesome5 size={24} name="chalkboard-teacher" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: 'Profile',
-          tabBarIcon: ({ color }) => <MaterialIcons size={24} name="person" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="home"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={24} name="house.fill" color={color} />,
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="users"
-        options={{
-          title: 'Users',
-          tabBarIcon: ({ color }) => <Feather name='users' size={24} color={color}/>,
-          href: null,
-        }}
-      />
-    </Tabs>
+    <NativeTabs
+    >
+      <NativeTabs.Trigger name="courses">
+        <Label>Courses</Label>
+        <Icon src={<VectorIcon family={AntDesign} name="book" />} />
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name='tutor-sessions'>
+        <Label>Tutor AI</Label>
+        <Icon sf="book.fill" drawable="custom_android_drawable_tutor" />
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="profile">
+        <Label>Profile</Label>
+        <Icon sf="person.fill" drawable="custom_android_drawable_profile" />
+      </NativeTabs.Trigger>
+    </NativeTabs>
   );
 }
