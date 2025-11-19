@@ -1,10 +1,8 @@
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { AntDesign } from '@expo/vector-icons';
 import { Icon, Label, NativeTabs, VectorIcon } from 'expo-router/unstable-native-tabs';
 import React from 'react';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
 
   return (
     <NativeTabs

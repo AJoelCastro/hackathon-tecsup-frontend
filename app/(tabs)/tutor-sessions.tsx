@@ -4,6 +4,7 @@ import { api } from '@/services/api';
 import { SesionTutoria } from '@/types/api';
 import React, { useEffect, useState } from 'react';
 import { FlatList, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function TutorSessionsScreen() {
   const [items, setItems] = useState<SesionTutoria[]>([]);
@@ -25,21 +26,23 @@ export default function TutorSessionsScreen() {
   }, []);
 
   return (
-    <ThemedView style={styles.container}>
-      <ThemedText type="title">Sesiones de Tutoría</ThemedText>
-      {loading && <ThemedText>Cargando...</ThemedText>}
-      {error && <ThemedText>{error}</ThemedText>}
-      <FlatList
-        data={items}
-        keyExtractor={(i) => i.id}
-        renderItem={({ item }) => (
-          <ThemedView style={styles.item}>
-            <ThemedText type="subtitle">{item.fecha ?? 'Sin fecha'}</ThemedText>
-            <ThemedText>{item.notas}</ThemedText>
-          </ThemedView>
-        )}
-      />
-    </ThemedView>
+    <SafeAreaView>
+      <ThemedView style={styles.container}>
+        <ThemedText type="title">Sesiones de Tutoría</ThemedText>
+        {loading && <ThemedText>Cargando...</ThemedText>}
+        {error && <ThemedText>{error}</ThemedText>}
+        <FlatList
+          data={items}
+          keyExtractor={(i) => i.id}
+          renderItem={({ item }) => (
+            <ThemedView style={styles.item}>
+              <ThemedText type="subtitle">{item.fecha ?? 'Sin fecha'}</ThemedText>
+              <ThemedText>{item.notas}</ThemedText>
+            </ThemedView>
+          )}
+        />
+      </ThemedView>
+    </SafeAreaView>
   );
 }
 
