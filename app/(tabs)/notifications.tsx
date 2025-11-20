@@ -1,11 +1,15 @@
-import { View, Text } from 'react-native'
+import SafeAreaBackground from '@/components/safe-area-background'
+import { ThemedText } from '@/components/themed-text'
 import React from 'react'
+import { View } from 'react-native'
 
 const NotificationsScreen = () => {
   return (
-    <View>
-      <Text>notifications</Text>
-    </View>
+    <SafeAreaBackground>
+        <View>
+            <ThemedText>aaaa</ThemedText>
+        </View>
+    </SafeAreaBackground>
   )
 }
 

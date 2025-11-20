@@ -1,5 +1,5 @@
 import { AntDesign } from '@expo/vector-icons';
-import { Icon, Label, NativeTabs, VectorIcon } from 'expo-router/unstable-native-tabs';
+import { Badge, Icon, Label, NativeTabs, VectorIcon } from 'expo-router/unstable-native-tabs';
 import React from 'react';
 
 export default function TabLayout() {
@@ -18,6 +18,10 @@ export default function TabLayout() {
       <NativeTabs.Trigger name="profile">
         <Label>Profile</Label>
         <Icon sf="person.fill" drawable="custom_android_drawable_profile" />
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="notifications" role='search'>
+        <Icon sf="bell.fill" drawable="custom_android_drawable_notification" />
+        <Badge>+9</Badge>
       </NativeTabs.Trigger>
     </NativeTabs>
   );
