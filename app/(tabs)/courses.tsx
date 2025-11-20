@@ -5,13 +5,12 @@ import { ThemedView } from '@/components/themed-view';
 import { fetchCursos } from '@/services/courseService';
 import { Curso } from '@/types/api';
 import React, { useEffect, useState } from 'react';
-import { FlatList, Platform, StyleSheet } from 'react-native';
+import { FlatList, StyleSheet } from 'react-native';
 
 const CoursesScreen = () => {
   const [cursos, setCursos] = useState<Curso[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const isIOS = Platform.OS === 'ios';
 
   useEffect(() => {
     let mounted = true;

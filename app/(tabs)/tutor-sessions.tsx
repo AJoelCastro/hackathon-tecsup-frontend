@@ -1,6 +1,7 @@
 import SafeAreaBackground from '@/components/safe-area-background';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import CardComponent from '@/components/tutor-sessions/Card';
 import { api } from '@/services/api';
 import { SesionTutoria } from '@/types/api';
 import React, { useEffect, useState } from 'react';
@@ -29,6 +30,7 @@ const TutorSessionsScreen = () => {
     <SafeAreaBackground>
       <ThemedView style={styles.container}>
         <ThemedText type="title">Sesiones de Tutoría</ThemedText>
+        <CardComponent title="Asistente Personal"/>
         {loading && <ThemedText>Cargando...</ThemedText>}
         {error && <ThemedText>{error}</ThemedText>}
         <FlatList
