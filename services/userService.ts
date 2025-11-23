@@ -237,5 +237,14 @@ export async function getTopEstudiantesPorExperiencia(params?: Record<string, st
   }
 }
 
+export async function createSession(): Promise<any> {
+  try {
+      const response = await axios.post(`http://192.168.101.23:8080/api/openai/audio-speech/session`);
+      return response.data; 
+  } catch (error) {
+      console.error('Error creating session:', error);
+      throw error;
+  }
+}
 
 
