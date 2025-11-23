@@ -2,7 +2,7 @@ import SafeAreaBackground from '@/components/safe-area-background';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useHookColor } from '@/hooks/use-hook-color';
-import { getEstadisticasUsuarios } from '@/services/userService';
+import { getEstadisticasUsuarios, getTopEstudiantesPorExperiencia } from '@/services/userService';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useState } from 'react';
 import { ColorValue, Dimensions, ScrollView, StyleSheet, View, ViewProps } from 'react-native';
@@ -28,15 +28,23 @@ const DashboardScreen = ({ lightColor, darkColor }: DashboardScreenProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState<Estadisticas | null>(null);
+  const [topStudents, setTopStudents] = useState<any[]>([]);
 
   const getColor = useHookColor(lightColor, darkColor);
-  const backgroundColor = getColor('card');
+  const cardColor = getColor('card');
+  const backgroundColor = getColor('background');
 
   const getData = async () => {
     try {
       setLoading(true);
       const estadisticas = await getEstadisticasUsuarios();
       setStats(estadisticas.data);
+      const fiveStudentsTop = await getTopEstudiantesPorExperiencia({ limit: 5 });
+      // API returns { success, data }
+      if (fiveStudentsTop && (fiveStudentsTop as any).data) {
+        setTopStudents((fiveStudentsTop as any).data);
+      }
+
     } catch (err) {
       setError((err as Error).message || 'Error');
     } finally {
@@ -71,9 +79,47 @@ const DashboardScreen = ({ lightColor, darkColor }: DashboardScreenProps) => {
         <ThemedView style={styles.container}>
           {loading && <ThemedText style={styles.loadingText}>Cargando...</ThemedText>}
           {error && <ThemedText style={styles.errorText}>{error}</ThemedText>}
-          
+          {/* Top Students Section */}
+          {topStudents && topStudents.length > 0 && (
+            <View style={[styles.topStudentsContainer, { backgroundColor: cardColor }]}> 
+              <ThemedText type="subtitle" style={styles.topStudentsTitle}>
+                Top Estudiantes
+              </ThemedText>
+              {topStudents.map((s: any) => (
+                <View key={s.usuario_id} style={styles.studentRow}>
+                  <View style={[styles.avatar, {backgroundColor}]}>
+                    <ThemedText style={styles.avatarText}>
+                      {s.nombre_completo.split(' ').slice(0,2).map((n: string) => n[0] ?? '').join('')}
+                    </ThemedText>
+                  </View>
+                  <View style={styles.studentInfo}>
+                    <ThemedText style={styles.studentName}>{s.nombre_completo}</ThemedText>
+                    <ThemedText style={styles.studentMeta}>{s.puntos_experiencia} pts · Nivel {s.nivel_experiencia} · Streak {s.streak_actual}</ThemedText>
+                  </View>
+                </View>
+              ))}
+            </View>
+          )}
           {stats && (
             <>
+            {/* Gráfica de pastel */}
+              <View style={[styles.chartContainer, { backgroundColor: cardColor }]}>
+                <ThemedText type="subtitle" style={styles.chartTitle}>
+                  Distribución de Usuarios
+                </ThemedText>
+                <PieChart
+                  data={chartData}
+                  width={Dimensions.get('window').width - 40}
+                  height={220}
+                  chartConfig={{
+                    color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                  }}
+                  accessor="population"
+                  backgroundColor="transparent"
+                  paddingLeft="15"
+                  absolute
+                />
+              </View>
               {/* Tarjetas de estadísticas principales */}
               <View style={styles.cardsContainer}>
                 <StatCard
@@ -105,42 +151,7 @@ const DashboardScreen = ({ lightColor, darkColor }: DashboardScreenProps) => {
                 />
               </View>
 
-              {/* Gráfica de pastel */}
-              <View style={[styles.chartContainer, { backgroundColor }]}>
-                <ThemedText type="subtitle" style={styles.chartTitle}>
-                  Distribución de Usuarios
-                </ThemedText>
-                <PieChart
-                  data={chartData}
-                  width={Dimensions.get('window').width - 40}
-                  height={220}
-                  chartConfig={{
-                    color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                  }}
-                  accessor="population"
-                  backgroundColor="transparent"
-                  paddingLeft="15"
-                  absolute
-                />
-              </View>
-
-              {/* Tarjeta de tasa de completación */}
-              <View style={[styles.completionCard, { backgroundColor }]}>
-                <ThemedText type="subtitle" style={styles.completionTitle}>
-                  Tasa de Completación de Perfiles
-                </ThemedText>
-                <View style={styles.progressBarContainer}>
-                  <View 
-                    style={[
-                      styles.progressBar, 
-                      { width: `${stats.tasa_completacion_perfiles}%` }
-                    ]} 
-                  />
-                </View>
-                <ThemedText style={styles.percentageText}>
-                  {stats.tasa_completacion_perfiles}%
-                </ThemedText>
-              </View>
+              
             </>
           )}
         </ThemedView>
@@ -271,6 +282,50 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: '#4ECDC4',
+  },
+  topStudentsContainer: {
+    borderRadius: 16,
+    padding: 16,
+    marginTop: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  topStudentsTitle: {
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  studentRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0,0,0,0.04)',
+  },
+  avatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  avatarText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  studentInfo: {
+    flex: 1,
+  },
+  studentName: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  studentMeta: {
+    fontSize: 12,
+    color: '#7f7f7f',
   },
 });
 

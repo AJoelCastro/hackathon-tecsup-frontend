@@ -2,7 +2,6 @@ import SafeAreaBackground from '@/components/safe-area-background';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import CardComponent from '@/components/tutor-sessions/Card';
-import { api } from '@/services/api';
 import { SesionTutoria } from '@/types/api';
 import React, { useEffect, useState } from 'react';
 import { FlatList, StyleSheet } from 'react-native';
@@ -16,11 +15,7 @@ const TutorSessionsScreen = () => {
     let mounted = true;
     setLoading(true);
     // backend route name may vary; adjust if your backend exposes a different path
-    api
-      .get<SesionTutoria[]>('/sesionestutoria')
-      .then((data) => mounted && setItems(data))
-      .catch((err) => mounted && setError(err.message || 'Error'))
-      .finally(() => mounted && setLoading(false));
+    
     return () => {
       mounted = false;
     };
